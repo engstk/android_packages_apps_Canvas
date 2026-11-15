@@ -47,9 +47,14 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
+import org.lineageos.canvas.ext.mirror
 import org.lineageos.canvas.ext.rotateBy
 import org.lineageos.canvas.ext.adjustBrightness
 import org.lineageos.canvas.ext.adjustContrast
+import org.lineageos.canvas.ext.adjustSaturation
+import org.lineageos.canvas.ext.adjustTint
+import org.lineageos.canvas.ext.adjustWarmth
+import org.lineageos.canvas.ext.applyPreset
 import org.lineageos.canvas.ext.applyGrey
 import org.lineageos.canvas.ext.applySepia
 import org.lineageos.canvas.ext.size
@@ -144,9 +149,14 @@ class EditViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * The current snapshot of the history list.
+     */
+    val currentSnapshot = historyList.snapshot
+
+    /**
      * The currently active actions applied to the image.
      */
-    private val actions = historyList.snapshot
+    private val actions = currentSnapshot
         .mapLatest { it.currentElements }
         .flowOn(Dispatchers.IO)
         .stateIn(
@@ -155,10 +165,11 @@ class EditViewModel(application: Application) : AndroidViewModel(application) {
             initialValue = emptyList(),
         )
 
+
     /**
      * Whether there is an action that can be undone.
      */
-    val canUndo = historyList.snapshot
+    val canUndo = currentSnapshot
         .mapLatest { it.canUndo }
         .flowOn(Dispatchers.IO)
         .stateIn(
@@ -170,7 +181,7 @@ class EditViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * Whether there is an action that can be redone.
      */
-    val canRedo = historyList.snapshot
+    val canRedo = currentSnapshot
         .mapLatest { it.canRedo }
         .stateIn(
             scope = viewModelScope,
@@ -261,13 +272,22 @@ class EditViewModel(application: Application) : AndroidViewModel(application) {
         historyList.redo()
     }
 
+    fun goToHistory(index: Int) {
+        historyList.goTo(index)
+    }
+
     private fun ImageBitmap.applyAction(action: Action): ImageBitmap = when (action) {
         is Action.Adjustment.Brightness -> adjustBrightness(action.value)
         is Action.Adjustment.Contrast -> adjustContrast(action.value)
+        is Action.Adjustment.Saturation -> adjustSaturation(action.value)
+        is Action.Adjustment.Warmth -> adjustWarmth(action.value)
+        is Action.Adjustment.Tint -> adjustTint(action.value)
         is Action.Adjustment.Grey -> applyGrey(action.saturation)
         is Action.Adjustment.Sepia -> applySepia(action.amount)
+        is Action.Adjustment.Preset -> applyPreset(action.preset, action.amount)
         is Action.Transformation.Crop -> crop(action.rect)
         is Action.Transformation.Rotation -> rotateBy(action.rotation)
+        is Action.Transformation.Mirror -> mirror(action.horizontal, action.vertical)
         is Action.Drawing -> createEmptyBitmap(hasAlpha = true).draw {
             drawImage(this@applyAction)
             drawAction(action)
@@ -281,7 +301,10 @@ class EditViewModel(application: Application) : AndroidViewModel(application) {
                     // Handled by the action replay pipeline
                 }
 
-                is Action.Adjustment.Contrast -> {
+                is Action.Adjustment.Contrast,
+                is Action.Adjustment.Saturation,
+                is Action.Adjustment.Warmth,
+                is Action.Adjustment.Tint -> {
                     // Handled by the action replay pipeline
                 }
 
@@ -289,7 +312,8 @@ class EditViewModel(application: Application) : AndroidViewModel(application) {
                     // Handled by the action replay pipeline
                 }
 
-                is Action.Adjustment.Sepia -> {
+                is Action.Adjustment.Sepia,
+                is Action.Adjustment.Preset -> {
                     // Handled by the action replay pipeline
                 }
             }
@@ -300,6 +324,10 @@ class EditViewModel(application: Application) : AndroidViewModel(application) {
                 }
 
                 is Action.Transformation.Rotation -> {
+                    // Handled by the action replay pipeline
+                }
+
+                is Action.Transformation.Mirror -> {
                     // Handled by the action replay pipeline
                 }
             }

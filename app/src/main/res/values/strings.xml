@@ -18,6 +18,17 @@
     <string name="save_as">Save as…</string>
     <string name="share">Share</string>
     <string name="more">More…</string>
+    <string name="history">History</string>
+
+    <!-- History -->
+    <string name="history_original">Original image</string>
+    <string name="history_eraser">Eraser</string>
+    <string name="history_rotation_degrees" translatable="false">%1$d°</string>
+    <string name="history_crop_size" translatable="false">%1$d × %2$d</string>
+    <string name="history_mirror">Mirror</string>
+    <string name="history_mirror_horizontal">Mirror horizontally</string>
+    <string name="history_mirror_vertical">Mirror vertically</string>
+    <string name="history_mirror_both">Mirror horizontally and vertically</string>
 
     <!-- Edit categories -->
     <string name="category_transformation">Transform image</string>
@@ -32,11 +43,16 @@
     <string name="edit_mode_text">Text</string>
     <string name="edit_mode_brightness">Brightness</string>
     <string name="edit_mode_contrast">Contrast</string>
+    <string name="edit_mode_saturation">Saturation</string>
+    <string name="edit_mode_warmth">Warmth</string>
+    <string name="edit_mode_tint">Tint</string>
     <string name="edit_mode_filters">Filters</string>
 
     <!-- Rotation -->
     <string name="rotate_counterclockwise">Rotate counterclockwise</string>
     <string name="rotate_clockwise">Rotate clockwise</string>
+    <string name="mirror_horizontally">Mirror horizontally</string>
+    <string name="mirror_vertically">Mirror vertically</string>
 
     <!-- Adjustments -->
     <string name="adjustment_percent" translatable="false">%1$.0f%%</string>
@@ -45,6 +61,12 @@
     <string name="filter_none">Original</string>
     <string name="filter_grey">Grey</string>
     <string name="filter_sepia">Sepia</string>
+    <string name="filter_punch">Punch</string>
+    <string name="filter_vintage">Vintage</string>
+    <string name="filter_cool">Cool</string>
+    <string name="filter_noir">Noir</string>
+    <string name="filter_fade">Fade</string>
+    <string name="filter_negative">Negative</string>
     <string name="filter_select_hint">Select a filter to preview</string>
     <string name="filter_tap_again_to_adjust">Tap selected filter again to adjust</string>
 

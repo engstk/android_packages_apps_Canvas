@@ -34,6 +34,27 @@ sealed interface Action {
         data class Contrast(val value: Float) : Adjustment
 
         /**
+         * Adjust the saturation of the image.
+         *
+         * @param value The saturation value
+         */
+        data class Saturation(val value: Float) : Adjustment
+
+        /**
+         * Adjust the warmth of the image.
+         *
+         * @param value The warmth value
+         */
+        data class Warmth(val value: Float) : Adjustment
+
+        /**
+         * Adjust the tint of the image.
+         *
+         * @param value The tint value
+         */
+        data class Tint(val value: Float) : Adjustment
+
+        /**
          * Apply the sepia color matrix.
          *
          * @param amount 0 keeps the original colors; 1 applies full sepia.
@@ -46,6 +67,13 @@ sealed interface Action {
          * @param saturation 0 is fully grey; 1 keeps the original colors.
          */
         data class Grey(val saturation: Float) : Adjustment
+
+        /**
+         * Apply a preset color matrix.
+         *
+         * @param preset The preset to apply.
+         */
+        data class Preset(val preset: FilterPreset, val amount: Float) : Adjustment
     }
 
     /**
@@ -61,6 +89,11 @@ sealed interface Action {
          * Rotate the current image.
          */
         data class Rotation(val rotation: RotationStep) : Transformation
+
+        /**
+         * Mirrors the current image horizontally or vertically.
+         */
+        data class Mirror(val horizontal: Boolean, val vertical: Boolean) : Transformation
     }
 
     sealed interface Drawing : Action {
@@ -122,18 +155,4 @@ enum class RotationStep(val degrees: Float) {
     ROT_90(90f),
     ROT_180(180f),
     ROT_270(270f);
-
-    fun clockwise() = when (this) {
-        ROT_0 -> ROT_90
-        ROT_90 -> ROT_180
-        ROT_180 -> ROT_270
-        ROT_270 -> ROT_0
-    }
-
-    fun counterClockwise() = when (this) {
-        ROT_0 -> ROT_270
-        ROT_90 -> ROT_0
-        ROT_180 -> ROT_90
-        ROT_270 -> ROT_180
-    }
 }
